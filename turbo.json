@@ -1,0 +1,37 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "pipeline": {
+    "build": {
+      "dependsOn": ["^build", "gen"],
+      "outputs": ["dist/**", "build/**", "lib/**", ".next/**"]
+    },
+    "dev": {
+      "dependsOn": ["gen"],
+      "cache": false
+    },
+    "test:ci": {
+      "outputs": ["coverage/**"],
+      "dependsOn": ["gen"]
+    },
+    "test:unit": {
+      "outputs": ["coverage/**"]
+    },
+    "test:functional": {
+      "dependsOn": ["build"],
+      "env": ["RUNNER_OS"],
+      "outputs": ["functional-coverage/**", "subprocess-coverage/**"]
+    },
+    "test:watch": {
+      "cache": false,
+      "dependsOn": ["build"]
+    },
+    "gen": {
+      "dependsOn": ["^build"],
+      "outputs": ["src/generated/**"]
+    },
+    "web#gen": {
+      "dependsOn": ["^build", "api#gen"],
+      "outputs": ["src/generated/**"]
+    }
+  }
+}

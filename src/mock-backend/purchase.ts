@@ -1,9 +1,10 @@
-import { Item } from './data';
-import { sleep } from './utils';
+import { Item, UserAndItemState } from "./types";
+import { sleep } from "./utils";
 
-type UserAndItemState = {
-  balance: number;
-  items: Item[];
+export const ERRORS = {
+  NOTFOUND: "NOTFOUND",
+  INSUFFICIENTBALANCE: "INSUFFICIENTBALANCE",
+  NOINVENTORY: "NOINVENTORY",
 };
 
 /**
@@ -11,13 +12,36 @@ type UserAndItemState = {
  * @returns {UserAndItemState} the updated state if a purchase should succeed
  */
 export const executePurchase = async (
-  itemId: Item['id'],
+  itemId: Item["id"],
   state: UserAndItemState
 ): Promise<UserAndItemState> => {
-  // NOTE: the following line intentionally pauses execution in this
-  // function and MUST remain in tact for the assignment to replicate a
-  // network request.
   await sleep(1000);
 
-  // @TODO: Not implemented
+  const { balance, items } = state;
+  const item = items.find((item) => item.id === itemId);
+
+  if (!item) {
+    throw new Error(ERRORS.NOTFOUND);
+  }
+
+  if (!item.inventory) {
+    throw new Error(ERRORS.NOINVENTORY);
+  }
+
+  if (item.price > balance) {
+    throw new Error(ERRORS.INSUFFICIENTBALANCE);
+  }
+
+  const itemIndex = items.findIndex((item) => item.id === itemId);
+  return {
+    balance: balance - item.price,
+    items: [
+      ...items.slice(0, itemIndex),
+      {
+        ...items[itemIndex],
+        inventory: items[itemIndex].inventory - 1,
+      },
+      ...items.slice(itemIndex + 1),
+    ],
+  };
 };

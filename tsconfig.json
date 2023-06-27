@@ -2,7 +2,11 @@
   "compilerOptions": {
     "target": "ES2018",
     "module": "ES2020",
-    "lib": ["dom", "esnext", "DOM.Iterable"],
+    "lib": [
+      "dom",
+      "esnext",
+      "DOM.Iterable"
+    ],
     "outDir": "./dist",
     "declaration": true,
     "declarationMap": true,
@@ -27,8 +31,15 @@
     "allowJs": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "isolatedModules": true
+    "isolatedModules": true,
+    "incremental": true
   },
-  "exclude": ["node_modules"],
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"]
+  "exclude": [
+    "node_modules"
+  ],
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx"
+  ]
 }

@@ -1,23 +1,24 @@
-import { initialBalance, initialItems, Item } from './data';
+import { useState, useCallback } from "react";
+import { initialBalance, initialItems } from "./data";
+import { Item, UseCheckout, UserAndItemState } from "./types";
+import { executePurchase } from "./purchase";
 
-type UseCheckout = {
-  items: Item[];
-
-  /**
-   * Charges the current account with the `price` in USD and decrements an item's inventory
-   *
-   * @throws if the current account does not have enough or if no inventory
-   *
-   */
-  buy: (itemId: Item['id']) => Promise<void>;
-};
-
-export const useCheckout = (): UseCheckout =>
-  // @TODO: Not implemented
-  ({
-    buy: async (itemId: Item['id']) => {
-      // @TODO: Not implemented
-      // executePurchase(...)
-    },
-    items: initialItems, // @TODO: Not implemented
+export const useCheckout = (): UseCheckout => {
+  const [checkoutState, setCheckoutState] = useState<UserAndItemState>({
+    items: initialItems,
+    balance: initialBalance,
   });
+
+  const callbackBuy = useCallback(
+    async (itemId: Item["id"]) => {
+      const updatedState = await executePurchase(itemId, checkoutState);
+      setCheckoutState(updatedState);
+    },
+    [checkoutState]
+  );
+
+  return {
+    buy: callbackBuy,
+    ...checkoutState,
+  };
+};
